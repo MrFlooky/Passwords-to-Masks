@@ -17,26 +17,13 @@ HashSet<string> WriteToHash(string fileName) {
 	return list;
 }
 
-bool IdentifyFileType(string path) {
-	HashSet<string> lines = WriteToHash(path);
-	double i = 0;
-	foreach (string line in lines)
-		if (line.Contains(':'))
-			i++;
-    long length = GetLinesCount(path);
-	bool type = false;
-	if (i / length > 0.7) type = true;
-	return type;
-}
-
 HashSet<string> RemoveLogin(HashSet<string> initial) {
 	HashSet<string> result = new();
 	foreach (string line in initial)
-		try {
+		if (line.Contains(':'))
 			result.Add(line.Split(':')[1]);
-		} catch {
-            result.Add(line);
-        }
+		else
+			result.Add(line);
 	return result;
 }
 
@@ -45,8 +32,7 @@ void MainWork(string path, float maxDifficulty) {
     HashSet<string> resultMasks = new();
 	if (File.Exists("masks.txt"))
 		File.Delete("masks.txt");
-    if (IdentifyFileType(path))
-		lines = RemoveLogin(lines);
+    lines = RemoveLogin(lines);
 	string symbols = @" !""#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
 	foreach (string line in lines) {
         double difficulty = 1;
